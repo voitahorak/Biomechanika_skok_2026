@@ -1,0 +1,24 @@
+Po tom co fungoval skript pro první měření jsme použili for-cyklus, který určil počet řádků a sloupců
+
+AMTI/Proband_1_pokus1.mat.xlsx (7680, 10)
+AMTI/Proband_1_pokus2.mat.xlsx (6080, 10)
+AMTI/Proband_1_pokus3.mat.xlsx (5952, 10)
+
+tím víme, že logicky mají všechny tabulky stejně sloupců, ale jsou různě dlouhé (různé řádky-> počet vzorků)
+
+
+Když jsem vygeneroval první tabulku, tak jedna hodnota ustřelila o 13m... takže máme nový blok programu
+
+#sus pokus
+data_kontrola = pd.read_excel("AMTI/Proband_5_pokus1.mat.xlsx", header=None)
+
+sila_kontrola = data_kontrola.iloc[:, 2] + data_kontrola.iloc[:, 7]
+
+let_kontrola = sila_kontrola < 10
+
+print("Počet vzorků pod 10 N:", let_kontrola.sum())
+print("První vzorek pod 10 N:", let_kontrola[let_kontrola].index[0])
+print("Poslední vzorek pod 10 N:", let_kontrola[let_kontrola].index[-1])
+
+
+--> tím jsme zjistili, že vzorek 871 byl také pod 10N a letová fáze najednou byla 3,367s
