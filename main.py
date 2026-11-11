@@ -1,0 +1,1 @@
+#zpracování dat skoku
