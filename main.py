@@ -108,12 +108,10 @@ for ucastnik in range(1, 10):
         m = fg / 9.81
 
         #jak dlouha byla letova faze
+        # jak dlouha byla letova faze
         let = fz_celkem < 10
-        zacatek_letu = let[let].index[0]
-        konec_letu = let[let].index[-1]
 
-        doba_letu = (konec_letu - zacatek_letu) / 1000
-        vyska_skoku = 9.81 * doba_letu ** 2 / 8
+
 
         #prepocitavame impulz síly na rychlost
         fz_vysledna = fz_celkem - fg
@@ -121,18 +119,18 @@ for ucastnik in range(1, 10):
         rychlost = cumulative_trapezoid(zrychleni, dx=1 / 1000, initial=0)
 
         rychlost_odrazu = rychlost[zacatek_letu - 1]
-        vyska_impulz = rychlost_odrazu ** 2 / (2 * 9.81)
+        vyska_impulz = (rychlost_odrazu ** 2 / (2 * 9.81))*100
 
         #rozdíl výsledků metod
-        rozdil_vysek = abs(vyska_skoku - vyska_impulz)
+        rozdil_vysek = (abs(vyska_skoku - vyska_impulz))
 
         #ukládáme výsledky do slovníku, kterej funguje a bojím se na něj šahat
         vysledky.append({
             "Účastník": ucastnik,
             "Pokus": pokus,
-            "Výška z letu [m]": vyska_skoku,
-            "Výška z impulzu [m]": vyska_impulz,
-            "Rozdíl [m]": rozdil_vysek
+            "Výška z letu [cm]": vyska_skoku,
+            "Výška z impulzu [cm]": vyska_impulz,
+            "Rozdíl [cm]": rozdil_vysek
         })
 
         print(nazev, data.shape)
@@ -144,7 +142,7 @@ print(tabulka.round(3))
 
 from pathlib import Path
 
-soubor = Path("vysledky_CMJ_vsichni_ucastnici_v3.xlsx")  #přidávám verzi .xlsx souboru
+soubor = Path("vysledky_CMJ_vsichni_ucastnici_v6.xlsx")  #přidávám verzi .xlsx souboru
 
 if soubor.exists():
     print("Soubor už existuje. Nebudu ho přepisovat!")
@@ -152,26 +150,3 @@ else:
     tabulka.to_excel(soubor, index=False)
     print("Nový Excel byl úspěšně vytvořen.")
 
-#sus pokus
-data_kontrola = pd.read_excel("AMTI/Proband_5_pokus1.mat.xlsx", header=None)
-
-sila_kontrola = data_kontrola.iloc[:, 2] + data_kontrola.iloc[:, 7]
-
-let_kontrola = sila_kontrola < 10
-
-print("Počet vzorků pod 10 N:", let_kontrola.sum())
-print("První vzorek pod 10 N:", let_kontrola[let_kontrola].index[0])
-print("Poslední vzorek pod 10 N:", let_kontrola[let_kontrola].index[-1])
-
-zmeny = let_kontrola.ne(let_kontrola.shift())
-print(sila_kontrola.index[zmeny])
-
-plt.figure()
-plt.plot(np.arange(len(sila_kontrola)) / 1000, sila_kontrola)
-plt.axhline(10, color="red", linestyle="--", label="Hranice 10 N")
-plt.xlim(1.5, 3.0)
-plt.xlabel("Čas [s]")
-plt.ylabel("Síla [N]")
-plt.title("Účastník 5 – pokus 1")
-plt.legend()
-# plt.show()
